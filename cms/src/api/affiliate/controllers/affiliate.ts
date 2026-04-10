@@ -1,2 +1,2 @@
 import { factories } from '@strapi/strapi';
-export default factories.createCoreController('api::affiliate.affiliate');
+export default factories.createCoreController('api::affiliate.affiliate' as any);
