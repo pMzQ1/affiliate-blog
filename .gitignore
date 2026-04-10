@@ -1,0 +1,31 @@
+# Environment files — never commit these
+.env
+.env.local
+.env.production
+.env*.local
+
+# Dependencies
+node_modules/
+
+# Next.js
+frontend/.next/
+frontend/out/
+
+# Strapi
+cms/.tmp/
+cms/build/
+cms/dist/
+
+# Python
+agent/venv/
+agent/__pycache__/
+**/__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.claude/
