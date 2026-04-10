@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "posts",
+  "info": {
+    "singularName": "post",
+    "pluralName": "posts",
+    "displayName": "Post"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "slug": {
+      "type": "uid",
+      "targetField": "title_nl",
+      "required": true
+    },
+    "title_nl": {
+      "type": "string",
+      "required": true
+    },
+    "content_html": {
+      "type": "richtext"
+    },
+    "excerpt_nl": {
+      "type": "text"
+    },
+    "keyword_primary": {
+      "type": "string"
+    },
+    "post_type": {
+      "type": "enumeration",
+      "enum": ["top10_gifts", "tech_gadgets", "kids_family", "review"],
+      "default": "top10_gifts"
+    },
+    "featured_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "seo_title": {
+      "type": "string"
+    },
+    "seo_description": {
+      "type": "text"
+    },
+    "post_products": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post-product.post-product",
+      "mappedBy": "post"
+    }
+  }
+}

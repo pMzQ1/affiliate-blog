@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "affiliates",
+  "info": {
+    "singularName": "affiliate",
+    "pluralName": "affiliates",
+    "displayName": "Affiliate"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "network": {
+      "type": "enumeration",
+      "enum": ["bol", "amazon_nl", "awin"],
+      "required": true
+    },
+    "partner_id": {
+      "type": "string"
+    },
+    "link_template": {
+      "type": "text"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

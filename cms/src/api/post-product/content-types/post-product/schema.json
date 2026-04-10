@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "post_products",
+  "info": {
+    "singularName": "post-product",
+    "pluralName": "post-products",
+    "displayName": "Post Product"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "post": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::post.post",
+      "inversedBy": "post_products"
+    },
+    "affiliate": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::affiliate.affiliate"
+    },
+    "product_name": {
+      "type": "string",
+      "required": true
+    },
+    "product_description": {
+      "type": "text"
+    },
+    "affiliate_url": {
+      "type": "string",
+      "required": true
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "position": {
+      "type": "integer"
+    }
+  }
+}

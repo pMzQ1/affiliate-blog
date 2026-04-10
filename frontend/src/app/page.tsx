@@ -1,65 +1,141 @@
-import Image from "next/image";
+import Image from 'next/image';
+import Link from 'next/link';
+import { getPosts } from '@/lib/strapi';
+import PostGrid from '@/components/PostGrid';
+import CategoryBadge from '@/components/CategoryBadge';
+import { Post } from '@/lib/types';
 
-export default function Home() {
+function resolveImageUrl(url: string): string {
+  if (url.startsWith('/')) {
+    return `${process.env.NEXT_PUBLIC_STRAPI_URL ?? ''}${url}`;
+  }
+  return url;
+}
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('nl-NL', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
+function FeaturedPost({ post }: { post: Post }) {
+  const imageUrl = post.featured_image ? resolveImageUrl(post.featured_image.url) : null;
+  const publishedDate = post.publishedAt ?? post.createdAt;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <Link
+      href={`/blog/${post.slug}`}
+      className="group flex flex-col md:flex-row bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
+    >
+      {/* Image */}
+      <div className="relative w-full md:w-1/2 aspect-video md:aspect-auto md:min-h-72 bg-gray-100 flex-shrink-0">
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={post.featured_image?.alternativeText ?? post.title_nl}
+            fill
+            className="object-cover"
+            priority
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200" />
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col justify-center p-8 gap-3">
+        <CategoryBadge postType={post.post_type} />
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-snug group-hover:text-[#6C63FF] transition-colors">
+          {post.title_nl}
+        </h2>
+        {post.excerpt_nl && (
+          <p className="text-gray-500 leading-relaxed line-clamp-3">{post.excerpt_nl}</p>
+        )}
+        <time dateTime={publishedDate} className="text-gray-400 text-sm mt-2">
+          {formatDate(publishedDate)}
+        </time>
+        <span className="inline-block mt-2 text-sm font-semibold text-[#6C63FF] group-hover:underline">
+          Lees meer →
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+export default async function HomePage() {
+  let posts: Post[] = [];
+
+  try {
+    const response = await getPosts();
+    posts = response.data ?? [];
+  } catch {
+    // Strapi may not be running in dev; render empty state gracefully
+    posts = [];
+  }
+
+  const [featuredPost, ...remainingPosts] = posts;
+
+  return (
+    <>
+      {/* Hero */}
+      <section className="bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#6C63FF] mb-4">
+            Jouw gids voor slimme aankopen
           </p>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+            De beste producttips{' '}
+            <span className="text-[#6C63FF]">voor jouw budget</span>
+          </h1>
+          <p className="mt-6 text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
+            Eerlijke reviews, handige top-10 lijsten en de nieuwste tech — zodat jij altijd de
+            beste keuze maakt zonder uren te hoeven zoeken.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/blog"
+              className="inline-block px-8 py-3 rounded-full bg-[#6C63FF] text-white font-semibold hover:bg-[#5a52d5] transition-colors"
+            >
+              Bekijk alle artikelen
+            </Link>
+            <Link
+              href="/over-mij"
+              className="inline-block px-8 py-3 rounded-full border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
+            >
+              Over mij
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col gap-16">
+        {posts.length === 0 ? (
+          <p className="text-center text-gray-400 text-lg py-16">
+            Binnenkort verschijnen hier de eerste artikelen.
+          </p>
+        ) : (
+          <>
+            {/* Featured post */}
+            {featuredPost && (
+              <section>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Uitgelicht artikel</h2>
+                <FeaturedPost post={featuredPost} />
+              </section>
+            )}
+
+            {/* Recent posts grid */}
+            {remainingPosts.length > 0 && (
+              <section>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Recente posts</h2>
+                <PostGrid posts={remainingPosts} />
+              </section>
+            )}
+          </>
+        )}
+      </div>
+    </>
   );
 }
