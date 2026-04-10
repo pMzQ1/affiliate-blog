@@ -430,6 +430,116 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAffiliateAffiliate extends Struct.CollectionTypeSchema {
+  collectionName: 'affiliates';
+  info: {
+    displayName: 'Affiliate';
+    pluralName: 'affiliates';
+    singularName: 'affiliate';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    link_template: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::affiliate.affiliate'
+    > &
+      Schema.Attribute.Private;
+    network: Schema.Attribute.Enumeration<['bol', 'amazon_nl', 'awin']> &
+      Schema.Attribute.Required;
+    partner_id: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPostProductPostProduct extends Struct.CollectionTypeSchema {
+  collectionName: 'post_products';
+  info: {
+    displayName: 'Post Product';
+    pluralName: 'post-products';
+    singularName: 'post-product';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    affiliate: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::affiliate.affiliate'
+    >;
+    affiliate_url: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    image_url: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::post-product.post-product'
+    > &
+      Schema.Attribute.Private;
+    position: Schema.Attribute.Integer;
+    post: Schema.Attribute.Relation<'manyToOne', 'api::post.post'>;
+    price: Schema.Attribute.Decimal;
+    product_description: Schema.Attribute.Text;
+    product_name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPostPost extends Struct.CollectionTypeSchema {
+  collectionName: 'posts';
+  info: {
+    displayName: 'Post';
+    pluralName: 'posts';
+    singularName: 'post';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    content_html: Schema.Attribute.RichText;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    excerpt_nl: Schema.Attribute.Text;
+    featured_image: Schema.Attribute.Media<'images'>;
+    keyword_primary: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::post.post'> &
+      Schema.Attribute.Private;
+    post_products: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::post-product.post-product'
+    >;
+    post_type: Schema.Attribute.Enumeration<
+      ['top10_gifts', 'tech_gadgets', 'kids_family', 'review']
+    > &
+      Schema.Attribute.DefaultTo<'top10_gifts'>;
+    publishedAt: Schema.Attribute.DateTime;
+    seo_description: Schema.Attribute.Text;
+    seo_title: Schema.Attribute.String;
+    slug: Schema.Attribute.UID<'title_nl'> & Schema.Attribute.Required;
+    title_nl: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -941,6 +1051,9 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::affiliate.affiliate': ApiAffiliateAffiliate;
+      'api::post-product.post-product': ApiPostProductPostProduct;
+      'api::post.post': ApiPostPost;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
